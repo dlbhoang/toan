@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trợ lý AI Tiểu học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#fffef9;--bg:#f3f1ea;--card:#fff;--ink:#1d2f6f;--tx:#1c2540;--mu:#667090;--bd:#dcd9cf;--grid:#d2e3f3;--margin:#d6453d;--btn:#1d2f6f;--btnt:#fff;--ok:#1f8a55;--ac:#1d2f6f;--hi:#6b3fc4;--wr:#b42318;--hl1:#bff0d3;--hl2:#bcd6ff;--hl3:#dccaff;--m:46px;
+ --disp:"Baloo 2","Be Vietnam Pro",system-ui,sans-serif;--body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#171d33;--bg:#0f1424;--card:#171d33;--ink:#a9c0ff;--tx:#e6ebf8;--mu:#9aa5c4;--bd:#2a3354;--grid:rgba(130,170,240,.13);--margin:#ff7b72;--btn:#a9c0ff;--btnt:#0f1424;--ok:#4fd18b;--ac:#a9c0ff;--hi:#c3a6ff;--wr:#ff8a80;--hl1:rgba(79,209,139,.28);--hl2:rgba(122,162,255,.3);--hl3:rgba(183,148,246,.3)}}
+:root[data-theme="dark"]{--paper:#171d33;--bg:#0f1424;--card:#171d33;--ink:#a9c0ff;--tx:#e6ebf8;--mu:#9aa5c4;--bd:#2a3354;--grid:rgba(130,170,240,.13);--margin:#ff7b72;--btn:#a9c0ff;--btnt:#0f1424;--ok:#4fd18b;--ac:#a9c0ff;--hi:#c3a6ff;--wr:#ff8a80;--hl1:rgba(79,209,139,.28);--hl2:rgba(122,162,255,.3);--hl3:rgba(183,148,246,.3)}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.65 var(--body)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+header.top{padding:30px 0 6px}
+header.top .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+h1{margin:0;font:800 clamp(30px,5vw,46px)/1.05 var(--disp);color:var(--ink);letter-spacing:-.01em}
+.tag{margin:8px 0 0;color:var(--mu);max-width:46ch}
+.stamp{font:600 12.5px/1.35 var(--body);color:var(--margin);border:2px dashed var(--margin);border-radius:10px;padding:8px 12px;transform:rotate(-2.5deg);max-width:270px;background:var(--card)}
+.tabs{display:flex;gap:26px;margin:22px 0 18px;border-bottom:1px solid var(--bd)}
+.tab{padding:10px 2px;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;background:none;color:var(--mu);font:700 17px var(--disp);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--margin)}
+.tab:focus-visible,button:focus-visible{outline:3px solid var(--margin);outline-offset:2px}
+section.grid{display:grid;grid-template-columns:minmax(290px,360px) 1fr;gap:26px;align-items:start}
+.tabs[hidden],section[hidden]{display:none!important}
+main.wrap{padding-bottom:26px}
+@media(max-width:860px){section.grid{grid-template-columns:1fr}:root{--m:26px}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px}
+.panel{position:sticky;top:12px}
+@media(max-width:860px){.panel{position:static}}
+.panel h2{margin:0;font:700 21px/1.2 var(--disp);color:var(--ink)}
+.panel .lead{margin:2px 0 4px;color:var(--mu);font-size:14px}
+label{display:block;font-size:13.5px;font-weight:600;margin:13px 0 5px}
+select,input,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--bd);border-radius:8px;background:var(--paper);color:var(--tx);font:inherit;font-size:15px}
+select:focus,input:focus,textarea:focus{outline:2px solid var(--ink);outline-offset:1px;border-color:var(--ink)}
+textarea{min-height:84px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:520px){.row{grid-template-columns:1fr}}
+button.go{margin-top:18px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--btn);color:var(--btnt);font:700 17px var(--disp);cursor:pointer}
+button.go:hover{filter:brightness(1.12)}
+button.go:disabled{opacity:.6;cursor:wait}
+button.sm{padding:6px 12px;border:1.5px solid var(--ink);border-radius:8px;background:transparent;color:var(--ink);font:600 13px var(--body);cursor:pointer}
+button.sm:hover{background:var(--ink);color:var(--paper)}
+#outA>.card,#outB>.card{position:relative;padding:22px 22px 22px calc(var(--m) + 18px);min-height:360px;border-color:var(--bd);
+ background-color:var(--paper);
+ background-image:linear-gradient(90deg,transparent calc(var(--m) + 2px),var(--margin) calc(var(--m) + 2px),var(--margin) calc(var(--m) + 4px),transparent calc(var(--m) + 4px)),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+ background-size:100% 100%,26px 26px,26px 26px;background-position:0 0,0 12px,0 0;box-shadow:0 1px 0 var(--bd),0 8px 0 -4px var(--paper),0 9px 0 -4px var(--bd)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.bar strong{font:700 20px/1.25 var(--disp);color:var(--ink)}
+.tools{display:flex;gap:6px}
+.wide{grid-column:1/-1}.hidden{display:none!important}
+.sharebox{padding:14px;border:1px dashed var(--ink);border-radius:10px;background:var(--paper);overflow-wrap:anywhere}
+.sharebox input{margin-top:8px}.question-card{padding:15px;margin:14px 0;border:1px solid var(--bd);border-radius:10px;background:var(--paper)}
+.timer{font:800 26px var(--disp);color:var(--margin);font-variant-numeric:tabular-nums}.timer.low{color:var(--wr)}
+.result-score{font:800 36px var(--disp);color:var(--ink)}.result-item{border-top:1px solid var(--bd);padding:12px 0}.result-item.good{color:var(--ok)}.result-item.retry{color:var(--wr)}
+.student-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.lv{--lc:var(--ac);--hl:var(--hl2);margin:0 0 18px}
+.lv.l1{--lc:var(--ok);--hl:var(--hl1)}.lv.l3{--lc:var(--hi);--hl:var(--hl3)}
+.lv h3{display:inline;margin:0;font:700 19px/1.4 var(--disp);color:var(--tx);background:linear-gradient(transparent 52%,var(--hl) 52%);padding:0 4px}
+.lv .d{color:var(--mu);font-size:14px;margin:6px 0 2px}
+ol{list-style:none;counter-reset:q;margin:10px 0 0;padding:0}
+li{counter-increment:q;position:relative;padding-left:40px;margin:14px 0}
+li::before{content:counter(q);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;border:2px solid var(--lc);color:var(--lc);background:var(--paper);display:grid;place-items:center;font:700 14px var(--disp)}
+.ans{color:var(--ok);font-size:14.5px;margin-top:3px;font-weight:500}
+.hint{color:var(--mu);font-size:13.5px;font-style:italic}
+.err{color:var(--wr);font-size:14px;margin-top:10px}
+.sec{margin:16px 0 2px;font:700 16px var(--disp);color:var(--margin)}
+.status{margin-top:10px;font-size:14px;color:var(--mu);min-height:20px;font-variant-numeric:tabular-nums}
+.status.busy::before{content:"";display:inline-block;width:14px;height:14px;margin-right:8px;vertical-align:-2px;border:2px solid var(--bd);border-top-color:var(--ink);border-radius:50%;animation:sp .8s linear infinite}
+.status.done{color:var(--ok)}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sk{margin-top:10px}.sk i{display:block;height:12px;border-radius:6px;margin:12px 0;background:linear-gradient(90deg,var(--bd),var(--hl2),var(--bd));background-size:200% 100%;animation:sh 1.2s linear infinite}
+.sk i:nth-child(2){width:85%}.sk i:nth-child(3){width:92%}.sk i:nth-child(4){width:60%}
+@keyframes sh{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.sk i,.status.busy::before{animation:none}}
+body.noans .ans{display:none}
+.empty h3{display:inline;margin:0;font:700 19px/1.5 var(--disp);color:var(--ink)}
+.empty p{margin:8px 0 18px;color:var(--mu);max-width:44ch}
+.empty .lv{margin:0 0 10px}.empty .lv span{font-size:14.5px;color:var(--tx)}
+footer{max-width:1120px;margin:0 auto;padding:6px 18px 40px;font-size:13px;color:var(--mu)}
+footer b{color:var(--margin)}
+@media print{header.top,.tabs,.panel,.tools,footer{display:none!important}section.grid{display:block}#outA>.card,#outB>.card{background:#fff;border:0;box-shadow:none;padding:0;min-height:0}body{background:#fff;color:#000}.lv{break-inside:avoid}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div><h1>Trợ lý AI Tiểu học</h1><p class="tag">Thiết kế bài luyện tập phân hóa và viết nhận xét cá nhân hóa theo Chương trình GDPT 2018.</p></div>
+  <div class="stamp">Dự thi Ngày hội Nhà giáo sáng tạo với công nghệ số và trí tuệ nhân tạo 2026</div>
+</div></header>
+
+<main class="wrap">
+  <div class="tabs" id="teacherTabs" role="tablist">
+    <button class="tab" role="tab" aria-selected="true" data-t="a">Bài luyện tập phân hóa</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="b">Nhận xét cá nhân hóa</button>
+    <button class="tab" role="tab" aria-selected="false" data-t="c">Giao bài theo link</button>
+  </div>
+
+  <section id="a" class="grid">
+    <div class="card panel">
+      <h2>Soạn phiếu cho cả lớp</h2><p class="lead">Chọn khối lớp, môn học và chủ đề để tạo ba mức bài tập.</p>
+      <div class="row">
+        <div><label for="gradeA">Khối lớp</label><select id="gradeA"><option>Lớp 1</option><option>Lớp 2</option><option selected>Lớp 3</option><option>Lớp 4</option><option>Lớp 5</option></select></div>
+        <div><label for="subjectA">Môn học</label><select id="subjectA"><option selected>Toán</option><option>Tiếng Việt</option><option>Tự nhiên và Xã hội</option><option>Khoa học</option><option>Lịch sử và Địa lý</option></select></div>
+      </div>
+      <label for="topic">Chủ đề bài học</label><select id="topic"></select>
+      <div class="row">
+        <div><label for="nq">Số câu / nhiệm vụ mỗi mức</label>
+          <select id="nq"><option>3</option><option selected>4</option><option>5</option><option>6</option></select></div>
+        <div><label for="ctx">Bối cảnh bài toán</label>
+          <select id="ctx"><option>Gần gũi với đời sống hằng ngày</option><option>Trường học và hoạt động trong lớp</option><option>Gia đình và cộng đồng địa phương</option><option>Thiên nhiên và bảo vệ môi trường</option></select></div>
+      </div>
+      <label for="cls">Đặc điểm lớp cần lưu ý (không bắt buộc)</label>
+      <textarea id="cls" placeholder="VD: Một số em cần thêm gợi ý khi đọc đề; vài em đã sẵn sàng làm câu vận dụng"></textarea>
+      <button class="go" id="goA">Tạo bài luyện tập</button>
+      <div class="status" id="stA"></div>
+      <div class="err" id="errA"></div>
+    </div>
+    <div id="outA"><div class="card empty">
+      <h3>Trang vở còn trống</h3>
+      <p>Chọn chủ đề ở bên trái rồi bấm “Tạo bài luyện tập”. Phiếu sẽ hiện ở đây và có thể in ra.</p>
+      <div class="lv l1"><h3>Củng cố</h3> <span>Bước nhỏ, có gợi ý cho em cần thêm thời gian.</span></div>
+      <div class="lv l2"><h3>Chuẩn</h3> <span>Đúng chuẩn kiến thức, có bài toán có lời văn.</span></div>
+      <div class="lv l3"><h3>Nâng cao</h3> <span>Vận dụng nhiều bước, tìm lỗi sai.</span></div>
+    </div></div>
+  </section>
+
+  <section id="b" class="grid" hidden>
+    <div class="card panel">
+      <h2>Nhận xét cho một em</h2><p class="lead">Ghi nhanh điều bạn quan sát được để nhận phản hồi cụ thể, tích cực.</p>
+      <div class="row">
+        <div><label for="nm">Tên gọi của em</label><input id="nm" placeholder="VD: Minh Anh"></div>
+        <div><label for="lvl">Mức đã làm</label>
+          <select id="lvl"><option>Củng cố</option><option selected>Chuẩn</option><option>Nâng cao</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="gradeB">Khối lớp</label><select id="gradeB"><option>Lớp 1</option><option>Lớp 2</option><option selected>Lớp 3</option><option>Lớp 4</option><option>Lớp 5</option></select></div>
+        <div><label for="subjectB">Môn học</label><select id="subjectB"><option selected>Toán</option><option>Tiếng Việt</option><option>Tự nhiên và Xã hội</option><option>Khoa học</option><option>Lịch sử và Địa lý</option></select></div>
+      </div>
+      <div class="row">
+        <div><label for="tp2">Chủ đề</label><select id="tp2"></select></div>
+        <div><label for="sc">Kết quả (đúng/tổng)</label><input id="sc" placeholder="VD: 3/5"></div>
+      </div>
+      <label for="mis">Em làm tốt gì? Sai ở đâu?</label>
+      <textarea id="mis" placeholder="VD: Đặt tính đúng, nhớ sang hàng chục. Nhầm 7×8, bài hai bước quên bước cuối."></textarea>
+      <button class="go" id="goB">Tạo nhận xét</button>
+      <div class="status" id="stB"></div>
+      <div class="err" id="errB"></div>
+    </div>
+    <div id="outB"><div class="card empty">
+      <h3>Chưa có nhận xét</h3>
+      <p>Nhập quan sát về bài làm của em rồi bấm “Tạo nhận xét”. Nhận xét luôn bắt đầu từ điều em làm được.</p>
+    </div></div>
+  </section>
+
+  <section id="c" class="grid" hidden>
+    <div class="card panel">
+      <h2>Giao bài riêng cho từng em</h2><p class="lead">Mỗi em có một link làm bài, đồng hồ và nhận xét tự động sau khi nộp.</p>
+      <label for="studentName">Tên gọi / biệt danh</label><input id="studentName" maxlength="40" placeholder="Ví dụ: Bông (không nhập họ tên đầy đủ)">
+      <label for="studentList">Tạo link cho nhiều em (mỗi dòng một tên gọi)</label>
+      <textarea id="studentList" rows="5" placeholder="Ví dụ: An&#10;Bình&#10;Chi"></textarea>
+      <div class="row">
+        <div><label for="gradeC">Khối lớp</label><select id="gradeC"><option>Lớp 1</option><option>Lớp 2</option><option selected>Lớp 3</option><option>Lớp 4</option><option>Lớp 5</option></select></div>
+        <div><label for="subjectC">Môn học</label><select id="subjectC"><option selected>Toán</option><option>Tiếng Việt</option><option>Tự nhiên và Xã hội</option><option>Khoa học</option><option>Lịch sử và Địa lý</option></select></div>
+      </div>
+      <label for="topicC">Chủ đề</label><select id="topicC"></select>
+      <div class="row">
+        <div><label for="levelC">Mức độ</label><select id="levelC"><option>Củng cố</option><option selected>Chuẩn</option><option>Nâng cao</option></select></div>
+        <div><label for="countC">Số câu</label><select id="countC"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
+      </div>
+      <label for="timeC">Thời gian làm bài (phút)</label><input id="timeC" type="number" min="1" max="90" value="15" inputmode="numeric">
+      <button class="go" id="createAssignment">Tạo bài và lấy link</button><div class="status" id="stC"></div><div class="err" id="errC"></div>
+      <button class="go" id="createBatch" type="button">Tạo link riêng cho danh sách</button>
+    </div>
+    <div id="outC"><div class="card empty"><h3>Link bài tập riêng</h3><p>Chọn mức độ phù hợp với em. Hệ thống tạo đề, link riêng và chấm bài khi học sinh nộp.</p></div></div>
+  </section>
+
+  <section id="studentMode" class="card" hidden aria-live="polite"><div id="studentContent"></div></section>
+</main>
+<footer><b>Lưu ý:</b> nội dung do AI tạo là bản nháp, bạn đọc lại và chỉnh sửa trước khi giao cho học sinh hoặc gửi phụ huynh. Không nhập họ tên đầy đủ, số điện thoại hay thông tin định danh của học sinh. Bấm “Ẩn đáp án” trước khi “In phiếu”.</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const TOPIC_BANK={
+ "Toán":["Số và phép tính","Cộng, trừ trong phạm vi phù hợp","Bảng nhân và bảng chia","Nhân, chia số tự nhiên","Phân số và phép tính","Đại lượng và đo đại lượng","Hình học và chu vi, diện tích","Thời gian và tiền Việt Nam","Giải toán có lời văn","Biểu thức và thứ tự thực hiện phép tính"],
+ "Tiếng Việt":["Đọc hiểu văn bản","Từ và câu","Chính tả và quy tắc viết hoa","Mở rộng vốn từ","Luyện viết đoạn văn","Kể chuyện và nói nghe","Dấu câu và cấu tạo câu","Biện pháp so sánh, nhân hóa"],
+ "Tự nhiên và Xã hội":["Gia đình và trường học","Cộng đồng địa phương","Thực vật và động vật","Cơ thể và chăm sóc sức khỏe","Trái Đất và bầu trời","Môi trường sống quanh em"],
+ "Khoa học":["Chất và sự biến đổi của chất","Năng lượng và sự biến đổi","Thực vật, động vật và môi trường","Con người và sức khỏe","Đất, nước, không khí","Sinh sản và phát triển"],
+ "Lịch sử và Địa lý":["Địa phương em","Thiên nhiên Việt Nam","Dân cư và hoạt động sản xuất","Các quốc gia láng giềng","Một số sự kiện và nhân vật lịch sử","Vùng miền Việt Nam"]
+};
+function updateTopics(subjectId,topicId,gradeId){
+ const subject=$(subjectId).value,select=$(topicId),topics=TOPIC_BANK[subject]||TOPIC_BANK.Toán;
+ select.textContent="";
+ topics.forEach(t=>{const o=document.createElement("option");o.textContent=t;select.appendChild(o)});
+}
+function syncSubjects(subjectId,topicId,gradeId){
+ const grade=$(gradeId).value,subject=$(subjectId),allowed=grade==="Lớp 4"||grade==="Lớp 5"
+  ?["Toán","Tiếng Việt","Khoa học","Lịch sử và Địa lý"]
+  :["Toán","Tiếng Việt","Tự nhiên và Xã hội"];
+ const current=subject.value;subject.textContent="";
+ allowed.forEach(name=>{const o=document.createElement("option");o.textContent=name;subject.appendChild(o)});
+ subject.value=allowed.includes(current)?current:"Toán";updateTopics(subjectId,topicId,gradeId);
+}
+for(const [s,t,g] of [["subjectA","topic","gradeA"],["subjectB","tp2","gradeB"],["subjectC","topicC","gradeC"]]){
+ syncSubjects(s,t,g);$(s).onchange=()=>updateTopics(s,t,g);$(g).onchange=()=>syncSubjects(s,t,g);
+}
+
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===b));
+  for(const id of ["a","b","c"])$(id).hidden=b.dataset.t!==id;
+});
+
+async function api(url,options={}){
+ const r=await fetch(url,{headers:{"Content-Type":"application/json",...(options.headers||{})},...options});
+ const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||"Có lỗi xảy ra. Hãy thử lại.");return d;
+}
+function showTeacherAssignment(a,teacherToken,shareBaseUrl=""){
+ const out=$("outC");out.textContent="";const card=el("div","card");
+ const bar=el("div","bar");bar.appendChild(el("strong",null,"Đã tạo: "+a.title));card.appendChild(bar);
+ const link=new URL(location.pathname,shareBaseUrl||location.origin);link.searchParams.set("b",a.id);
+ const box=el("div","sharebox");box.appendChild(el("div",null,`Gửi link này cho ${a.studentLabel}. Bài có ${a.questions.length} câu và giới hạn ${a.timeLimit} phút.`));
+ if(["localhost","127.0.0.1","0.0.0.0"].includes(link.hostname))box.appendChild(el("p","err","Link localhost chỉ mở được trên máy này. Hãy triển khai ứng dụng lên hosting hoặc mạng nội bộ rồi cấu hình PUBLIC_APP_URL trước khi gửi cho học sinh."));
+ const input=el("input");input.readOnly=true;input.value=link.href;box.appendChild(input);
+ const copy=el("button","sm","Sao chép link");copy.onclick=async()=>{try{await navigator.clipboard.writeText(input.value);copy.textContent="Đã sao chép"}catch{input.select();document.execCommand("copy");copy.textContent="Đã sao chép"}setTimeout(()=>copy.textContent="Sao chép link",1500)};
+ const results=el("button","sm","Xem kết quả học sinh");results.style.marginLeft="8px";results.onclick=()=>loadTeacherResults(a.id,teacherToken);
+ box.append(copy,results);card.appendChild(box);const area=el("div");area.id="teacherResults";card.appendChild(area);out.appendChild(card);
+}
+async function loadTeacherResults(id,token,areaId="teacherResults"){
+ const area=$(areaId);if(!area)return;area.textContent="Đang tải kết quả…";
+ try{const {assignment:a}=await api("/api/assignment-results",{method:"POST",body:JSON.stringify({id,teacherToken:token})});area.textContent="";
+  if(a.state!=="submitted"){area.appendChild(el("p","status","Chưa có bài nộp. Kết quả sẽ xuất hiện ở đây sau khi học sinh nộp bài."));return}
+  const r=a.result;area.appendChild(el("div","sec",`Kết quả của ${a.studentLabel}`));area.appendChild(el("div","result-score",`${r.score}/10`));area.appendChild(el("p",null,r.comment));
+  (r.items||[]).forEach((item,i)=>{const row=el("div","result-item "+(item.correct?"good":"retry"));row.appendChild(el("b",null,`${i+1}. ${item.correct?"Đúng":"Cần xem lại"}`));row.appendChild(el("div",null,item.question));row.appendChild(el("div",null,"Học sinh trả lời: "+(item.studentAnswer||"(để trống)")));row.appendChild(el("div",null,"Đáp án: "+item.correctAnswer));row.appendChild(el("div",null,item.feedback));area.appendChild(row)});
+  area.appendChild(el("div","sec","Điểm mạnh"));area.appendChild(el("p",null,r.strength));area.appendChild(el("div","sec","Nội dung cần luyện"));area.appendChild(el("p",null,r.nextFocus));
+ }catch(e){area.textContent=e.message}
+}
+
+$("createAssignment").onclick=async()=>{
+ const btn=$("createAssignment"),err=$("errC"),st=$("stC");err.textContent="";st.textContent="Đang tạo câu hỏi riêng cho học sinh…";btn.disabled=true;
+ try{const data=await api("/api/assignments",{method:"POST",body:JSON.stringify({studentLabel:$("studentName").value.trim(),grade:$("gradeC").value,subject:$("subjectC").value,topic:$("topicC").value,level:$("levelC").value,count:Number($("countC").value),timeLimit:Number($("timeC").value)})});
+  localStorage.setItem("toan3:teacher:"+data.assignment.id,data.teacherToken);showTeacherAssignment(data.assignment,data.teacherToken,data.shareBaseUrl);st.textContent="Đã tạo link bài tập riêng.";
+ }catch(e){err.textContent=e.message;st.textContent=""}finally{btn.disabled=false}
+};
+function showBatchAssignments(rows,shareBaseUrl=""){
+ const out=$("outC");out.textContent="";const wrap=el("div","card");const bar=el("div","bar");bar.appendChild(el("strong",null,`Đã tạo ${rows.length} link bài tập riêng`));
+ localStorage.setItem("toan3:lastBatch",JSON.stringify(rows.map(({assignment})=>assignment.id)));
+ localStorage.setItem("toan3:lastBatchBase",shareBaseUrl||location.origin);
+ const summaryBtn=el("button","sm","Tổng kết cả nhóm");summaryBtn.onclick=()=>loadBatchSummary(rows,summaryArea);bar.appendChild(summaryBtn);
+ const all=el("button","sm","Sao chép tất cả link");all.onclick=async()=>{const links=rows.map(({assignment:a})=>{const u=new URL(location.pathname,shareBaseUrl||location.origin);u.searchParams.set("b",a.id);return `${a.studentLabel}: ${u.href}`}).join("\n");try{await navigator.clipboard.writeText(links);all.textContent="Đã sao chép"}catch{all.textContent="Không sao chép được"}setTimeout(()=>all.textContent="Sao chép tất cả link",1500)};
+ bar.appendChild(all);wrap.appendChild(bar);const summaryArea=el("div");summaryArea.className="batch-summary";wrap.appendChild(summaryArea);
+ rows.forEach(({assignment:a,teacherToken})=>{
+  localStorage.setItem("toan3:teacher:"+a.id,teacherToken);
+  const box=el("div","sharebox");box.style.marginTop="12px";box.appendChild(el("b",null,a.studentLabel));
+  const u=new URL(location.pathname,shareBaseUrl||location.origin);u.searchParams.set("b",a.id);const input=el("input");input.readOnly=true;input.value=u.href;box.appendChild(input);
+  const copy=el("button","sm","Sao chép link");copy.onclick=async()=>{try{await navigator.clipboard.writeText(input.value);copy.textContent="Đã sao chép"}catch{input.select();document.execCommand("copy");copy.textContent="Đã sao chép"}setTimeout(()=>copy.textContent="Sao chép link",1500)};
+  const result=el("button","sm","Xem kết quả");result.style.marginLeft="8px";const areaId="results-"+a.id;result.onclick=()=>loadTeacherResults(a.id,teacherToken,areaId);
+  box.append(copy,result);const area=el("div");area.id=areaId;box.appendChild(area);wrap.appendChild(box);
+ });out.appendChild(wrap);
+}
+async function loadBatchSummary(rows,area){
+ area.textContent="Đang tổng hợp kết quả…";
+ try{
+  const results=await Promise.all(rows.map(async({assignment,teacherToken})=>{
+   const data=await api("/api/assignment-results",{method:"POST",body:JSON.stringify({id:assignment.id,teacherToken})});return data.assignment;
+  }));
+  const submitted=results.filter(a=>a.state==="submitted"&&a.result);area.textContent="";
+  const head=el("div","sec",`Tổng kết nhóm: ${submitted.length}/${results.length} em đã nộp`);area.appendChild(head);
+  if(submitted.length){const avg=submitted.reduce((sum,a)=>sum+Number(a.result.score||0),0)/submitted.length;area.appendChild(el("p","result-score",`Điểm trung bình ${avg.toFixed(1)}/10`));}
+  results.forEach(a=>{const line=el("div","result-item "+(a.state==="submitted"?"good":"retry"));line.appendChild(el("b",null,a.studentLabel+": "+(a.state==="submitted"&&a.result?`${a.result.score}/10`:"Chưa nộp")));if(a.result?.comment)line.appendChild(el("div",null,a.result.comment));if(a.result?.nextFocus)line.appendChild(el("div",null,"Cần luyện: "+a.result.nextFocus));area.appendChild(line)});
+ }catch(e){area.textContent="Chưa tải được tổng kết: "+e.message}
+}
+async function restoreLastBatch(){
+ try{
+  let ids=JSON.parse(localStorage.getItem("toan3:lastBatch")||"[]");
+  if(!Array.isArray(ids)||!ids.length)ids=Object.keys(localStorage).filter(key=>key.startsWith("toan3:teacher:")).map(key=>key.slice("toan3:teacher:".length)).slice(-10);
+  if(!Array.isArray(ids)||ids.length<2||ids.length>10)return;
+  const rows=ids.map(id=>({id,teacherToken:localStorage.getItem("toan3:teacher:"+id)}));if(rows.some(x=>!x.teacherToken))return;
+  const restored=(await Promise.all(rows.map(async x=>{try{const data=await api("/api/assignment-results",{method:"POST",body:JSON.stringify(x)});return{assignment:data.assignment,teacherToken:x.teacherToken}}catch{return null}}))).filter(Boolean);
+  if(restored.length<2)return;
+  showBatchAssignments(restored,localStorage.getItem("toan3:lastBatchBase")||location.origin);
+ }catch{}
+}
+$("createBatch").onclick=async()=>{
+ const btn=$("createBatch"),err=$("errC"),st=$("stC"),students=$("studentList").value.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+ err.textContent="";if(students.length<2||students.length>10){err.textContent="Nhập từ 2 đến 10 tên gọi, mỗi em một dòng.";return}
+ st.textContent=`Đang tạo ${students.length} bộ câu hỏi riêng…`;btn.disabled=true;
+ try{const data=await api("/api/assignments/batch",{method:"POST",body:JSON.stringify({students,grade:$("gradeC").value,subject:$("subjectC").value,topic:$("topicC").value,level:$("levelC").value,count:Number($("countC").value),timeLimit:Number($("timeC").value)})});
+  showBatchAssignments(data.assignments,data.shareBaseUrl);st.textContent=`Đã tạo ${data.assignments.length} link riêng. Sao chép từng link để gửi cho đúng em.`;
+ }catch(e){err.textContent=e.message;st.textContent=""}finally{btn.disabled=false}
+};
+if(!new URLSearchParams(location.search).has("b"))restoreLastBatch();
+
+let studentTimer=null,studentSubmitting=false,currentAssignment=null;
+function renderStudentResult(a){
+ clearInterval(studentTimer);const root=$("studentContent");root.textContent="";const r=a.result;
+ const head=el("div","student-head");head.appendChild(el("h2",null,"Con đã hoàn thành bài rồi!"));head.appendChild(el("div","result-score",`${r.score}/10`));root.appendChild(head);
+ if(r.timedOut)root.appendChild(el("p","err","Bài được nộp sau khi hết giờ nên hệ thống chỉ ghi nhận kết quả trước thời hạn."));
+ root.appendChild(el("p",null,r.comment));root.appendChild(el("div","sec","Cô/thầy nhận xét"));root.appendChild(el("p",null,r.strength));root.appendChild(el("div","sec","Mình cùng luyện thêm nhé"));root.appendChild(el("p",null,r.nextFocus));
+ (r.items||[]).forEach((item,i)=>{const row=el("div","result-item "+(item.correct?"good":"retry"));row.appendChild(el("b",null,`${i+1}. ${item.correct?"Con làm đúng":"Mình thử lại nhé"}`));row.appendChild(el("div",null,item.question));row.appendChild(el("div",null,"Bài làm của con: "+(item.studentAnswer||"(để trống)")));row.appendChild(el("div",null,"Đáp án: "+item.correctAnswer));row.appendChild(el("div",null,item.feedback));root.appendChild(row)});
+ if(r.nextQuestions?.length){root.appendChild(el("div","sec","Hai câu luyện tiếp theo"));r.nextQuestions.forEach((q,i)=>{const row=el("div","question-card");row.appendChild(el("b",null,`${i+1}. ${q.q}`));root.appendChild(row)})}
+ root.appendChild(el("p","hint","Nhận xét do AI tạo để tham khảo; cô/thầy sẽ xem lại kết quả."));
+}
+function submitStudent(){
+ if(studentSubmitting||!currentAssignment||currentAssignment.state==="submitted")return;
+ studentSubmitting=true;const btn=$("submitStudent");if(btn){btn.disabled=true;btn.textContent="Đang chấm bài…"}
+ const answers=currentAssignment.questions.map((_,i)=>$("answer"+i)?.value||"");
+ api(`/api/assignments/${encodeURIComponent(currentAssignment.id)}/submit`,{method:"POST",body:JSON.stringify({answers})})
+  .then(({assignment})=>{localStorage.removeItem("toan3:draft:"+assignment.id);currentAssignment=assignment;renderStudentResult(assignment)})
+  .catch(e=>{studentSubmitting=false;const msg=$("submitError");if(msg)msg.textContent=e.message;if(btn){btn.disabled=false;btn.textContent="Nộp bài"}});
+}
+function startStudentTimer(expiresAt){
+ const timer=$("studentTimer");const update=()=>{let left=Math.max(0,Math.ceil((expiresAt-Date.now())/1000));timer.textContent=`${String(Math.floor(left/60)).padStart(2,"0")}:${String(left%60).padStart(2,"0")}`;timer.classList.toggle("low",left<=60);if(left===0){clearInterval(studentTimer);submitStudent()}};
+ update();studentTimer=setInterval(update,1000);
+}
+async function loadStudent(id){
+ $("teacherTabs").hidden=true;for(const key of ["a","b","c"])$(key).hidden=true;$("studentMode").hidden=false;
+ $("studentContent").textContent="Bài tập đang tải…";
+ try{const {assignment:a}=await api(`/api/assignments/${encodeURIComponent(id)}`);currentAssignment=a;const root=$("studentContent");root.textContent="";
+  if(a.state==="submitted"){renderStudentResult(a);return}
+  if(a.state==="grading"){$("studentContent").appendChild(el("p","status","Bài đang được chấm. Trang sẽ tự cập nhật kết quả sau ít giây…"));setTimeout(()=>loadStudent(id),2500);return}
+  if(a.state==="ready"){
+   const intro=el("div","student-head"),copy=el("div");copy.appendChild(el("h2",null,"Bài tập của "+a.studentLabel));copy.appendChild(el("p","tag",`${a.grade} · ${a.subject} · ${a.topic}`));copy.appendChild(el("p",null,`${a.questions.length} câu · ${a.timeLimit} phút. Đồng hồ bắt đầu khi con bấm nút bên dưới.`));intro.appendChild(copy);root.appendChild(intro);
+   const begin=el("button","go","Bắt đầu làm bài");begin.onclick=async()=>{begin.disabled=true;try{const data=await api(`/api/assignments/${encodeURIComponent(id)}/start`,{method:"POST",body:"{}"});currentAssignment=data.assignment;renderStudentExam(data.assignment)}catch(e){root.appendChild(el("div","err",e.message));begin.disabled=false}};root.appendChild(begin);return;
+  }
+  renderStudentExam(a);
+ }catch(e){$("studentContent").textContent=e.message}
+}
+function renderStudentExam(a){
+ const root=$("studentContent");root.textContent="";if(a.state==="submitted"){renderStudentResult(a);return}
+ const head=el("div","student-head");const title=el("div");title.appendChild(el("h2",null,a.title));title.appendChild(el("p","tag",`${a.grade} · ${a.subject} · ${a.topic} · ${a.studentLabel}`));head.appendChild(title);
+ const time=el("div");time.appendChild(el("div","hint","Thời gian còn lại"));const timer=el("div","timer");timer.id="studentTimer";time.appendChild(timer);head.appendChild(time);root.appendChild(head);
+ let draft=[];try{draft=JSON.parse(localStorage.getItem("toan3:draft:"+a.id)||"[]")}catch{}
+ const form=el("div");a.questions.forEach((q,i)=>{const box=el("div","question-card");box.appendChild(el("label",null,`${i+1}. ${q.q}`));if(q.hint)box.appendChild(el("p","hint","Gợi ý: "+q.hint));const input=el("input");input.id="answer"+i;input.setAttribute("aria-label",`Câu trả lời ${i+1}`);input.autocomplete="off";input.value=draft[i]||"";input.oninput=()=>{const values=a.questions.map((_,j)=>$("answer"+j)?.value||"");localStorage.setItem("toan3:draft:"+a.id,JSON.stringify(values))};box.appendChild(input);form.appendChild(box)});root.appendChild(form);
+ const note=el("p","hint","Khi hết giờ, bài sẽ tự động được nộp với những câu con đã trả lời.");root.appendChild(note);const submit=el("button","go","Nộp bài");submit.id="submitStudent";submit.onclick=submitStudent;root.appendChild(submit);const error=el("div","err");error.id="submitError";root.appendChild(error);startStudentTimer(a.expiresAt);
+}
+const assignmentId=new URLSearchParams(location.search).get("b");if(assignmentId)loadStudent(assignmentId);
+
+let serverMs=null;
+const sample={json:async msgs=>{
+  const r=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:msgs[0].content})});
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw {code:r.status===429?"rate_limited":"error",message:d.error};
+  serverMs=Math.max(serverMs||0,Number(r.headers.get("X-Gen-Time-Ms"))||0);
+  return d;
+}};
+
+const SYS="Bạn là giáo viên tiểu học giàu kinh nghiệm, dạy theo Chương trình GDPT 2018 của Việt Nam. Dùng tiếng Việt đơn giản, đúng thuật ngữ SGK và phù hợp lứa tuổi. Với bài tập, mọi số liệu và đáp án PHẢI chính xác: tự kiểm tra từng đáp án trước khi trả lời. Chỉ trả về JSON hợp lệ, không kèm giải thích hay markdown.";
+
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function printBtn(){const b=el("button","sm","In phiếu");b.onclick=()=>window.print();return b}
+function sk(){const w=el("div","sk");for(let i=0;i<4;i++)w.appendChild(el("i"));return w}
+function copyBtn(getText){const b=el("button","sm","Sao chép");b.onclick=async()=>{try{await navigator.clipboard.writeText(getText());b.textContent="Đã chép"}catch(e){b.textContent="Không chép được"}setTimeout(()=>b.textContent="Sao chép",1600)};return b}
+
+async function run(btn,err,st,fn){
+  err.textContent="";st.textContent="";st.className="status";
+  btn.disabled=true;const old=btn.textContent;btn.textContent="Đang tạo...";
+  const t0=performance.now();serverMs=null;
+  const tick=()=>{st.textContent="Đang tạo... "+((performance.now()-t0)/1000).toFixed(1)+"s"};
+  st.className="status busy";tick();const iv=setInterval(tick,100);
+  try{
+    const ok=await fn();
+    clearInterval(iv);
+    if(ok===false){st.className="status";st.textContent=""}
+    else{
+      const tot=((performance.now()-t0)/1000).toFixed(1);
+      st.className="status done";
+      st.textContent="Hoàn tất sau "+tot+"s"+(serverMs?" (AI xử lý tại server: "+(serverMs/1000).toFixed(1)+"s)":"");
+    }
+  }catch(e){
+    clearInterval(iv);st.className="status";st.textContent="";
+    err.textContent=e&&e.code==="rate_limited"?"Đang quá tải, thử lại sau ít phút.":"Chưa tạo được. Thử lại nhé.";
+  }
+  btn.disabled=false;btn.textContent=old;
+}
+
+const LV=[
+ {name:"Củng cố",spec:"chia nhiệm vụ thành bước nhỏ vừa sức, dùng ví dụ quen thuộc, mỗi câu có gợi ý ngắn trong trường hint"},
+ {name:"Chuẩn",spec:"đáp ứng yêu cầu cần đạt của bài học, kết hợp câu hỏi cơ bản và ít nhất một nhiệm vụ vận dụng; hint là chuỗi rỗng"},
+ {name:"Nâng cao",spec:"tăng độ mở và yêu cầu suy luận/vận dụng, có một câu tìm lỗi sai hoặc câu hỏi mở, không vượt yêu cầu của khối lớp; hint là chuỗi rỗng"}];
+let wsData=[];
+
+$("goA").onclick=()=>run($("goA"),$("errA"),$("stA"),async()=>{
+  const n=$("nq").value,topic=$("topic").value,ctx=$("ctx").value,cls=$("cls").value.trim(),grade=$("gradeA").value,subject=$("subjectA").value;
+  buildA(`${grade} ${subject}: ${topic}`);
+  const one=async i=>{
+    const l=LV[i];
+    const p=`Môn ${subject}, ${grade}, chủ đề "${topic}". Tạo ${n} câu luyện tập mức "${l.name}": ${l.spec}. Bối cảnh hoặc ngữ liệu: ${ctx}.${cls?` Đặc điểm lớp cần lưu ý: ${cls}.`:""} Mỗi đáp án kèm giải thích ngắn gọn hoặc căn cứ trả lời phù hợp với môn học.
+Trả về JSON: {"goal":string,"questions":[{"q":string,"hint":string,"a":string}]}`;
+    try{const r=await sample.json([{role:"user",content:SYS+"\n\n"+p}]);wsData[i]=r;fillLevel(i,r)}
+    catch(e){failLevel(i,one)}
+  };
+  await Promise.all(LV.map((_,i)=>one(i)));
+});
+
+function buildA(topic){
+  wsData=[];document.body.classList.remove("noans");
+  const out=$("outA");out.textContent="";
+  const card=el("div","card");
+  const bar=el("div","bar");bar.appendChild(el("strong",null,"Phiếu luyện tập: "+topic));
+  const tools=el("div","tools");
+  const tg=el("button","sm","Ẩn đáp án");tg.onclick=()=>{document.body.classList.toggle("noans");tg.textContent=document.body.classList.contains("noans")?"Hiện đáp án":"Ẩn đáp án"};
+  const txt=()=>LV.map((l,i)=>{const d=wsData[i];return d?`Mức ${i+1}: ${l.name}\n`+d.questions.map((q,k)=>`${k+1}. ${q.q}${q.hint?` (Gợi ý: ${q.hint})`:""}\n   Đáp án: ${q.a}`).join("\n"):""}).filter(Boolean).join("\n\n");
+  tools.append(tg,copyBtn(txt),printBtn());bar.appendChild(tools);card.appendChild(bar);
+  LV.forEach((l,i)=>{
+    const d=el("div","lv l"+(i+1));d.id="lv"+i;
+    d.appendChild(el("h3",null,`Mức ${i+1}: ${l.name}`));
+    d.appendChild(sk());
+    card.appendChild(d);
+  });
+  out.appendChild(card);
+}
+function fillLevel(i,r){
+  const d=$("lv"+i);d.textContent="";
+  d.appendChild(el("h3",null,`Mức ${i+1}: ${LV[i].name}`));
+  if(r.goal)d.appendChild(el("p","d",r.goal));
+  const ol=el("ol");
+  (r.questions||[]).forEach(q=>{
+    const li=el("li");li.appendChild(el("div",null,q.q));
+    if(q.hint)li.appendChild(el("div","hint","Gợi ý: "+q.hint));
+    li.appendChild(el("div","ans","Đáp án: "+q.a));
+    ol.appendChild(li);
+  });
+  d.appendChild(ol);
+}
+function failLevel(i,retry){
+  const d=$("lv"+i);d.textContent="";
+  d.appendChild(el("h3",null,`Mức ${i+1}: ${LV[i].name}`));
+  d.appendChild(el("p","err","Chưa tạo được mức này."));
+  const b=el("button","sm","Thử lại");b.onclick=async()=>{d.appendChild(sk());b.remove();await retry(i)};
+  d.appendChild(b);
+}
+
+$("goB").onclick=()=>run($("goB"),$("errB"),$("stB"),async()=>{
+  const nm=$("nm").value.trim()||"em",mis=$("mis").value.trim(),grade=$("gradeB").value,subject=$("subjectB").value;
+  if(!mis){$("errB").textContent="Hãy ghi ít nhất một quan sát về bài làm của em.";return false}
+  const p=`Viết nhận xét cá nhân hóa cho học sinh tiểu học ${grade}, môn ${subject}.
+Tên gọi: ${nm}. Chủ đề: ${$("tp2").value}. Mức đã làm: ${$("lvl").value}. Kết quả: ${$("sc").value||"không ghi"}.
+Quan sát của giáo viên: ${mis}
+Quy tắc: nhận xét bằng lời theo tinh thần Thông tư 27/2020; ghi nhận điều em làm được trước, chỉ ra 1 đến 2 điểm cần cải thiện cụ thể, không so sánh với bạn khác, không gán nhãn (không dùng "yếu", "kém", "lười"), giọng ấm áp, câu ngắn phù hợp học sinh ${grade}. Chỉ dựa trên quan sát được cung cấp, không bịa thêm.
+Trả về JSON: {"cho_hoc_sinh":string (2 đến 3 câu, xưng "cô/thầy" gọi tên em),"diem_manh":string,"can_luyen_them":string,"cach_luyen":string (1 hoạt động ngắn 5 phút ở nhà, phù hợp môn học),"bai_tiep_theo":[{"q":string,"a":string}] (đúng 2 nhiệm vụ/câu hỏi phù hợp môn và độ tuổi; đáp án hoặc tiêu chí trả lời chính xác),"cho_phu_huynh":string (2 câu, tích cực, gợi ý cách đồng hành)}`;
+  const r=await sample.json([{role:"user",content:SYS+"\n\n"+p}],{modelTier:"default"});
+  renderB(r);
+});
+
+function renderB(r){
+  const out=$("outB");out.textContent="";
+  const card=el("div","card");
+  const bar=el("div","bar");bar.appendChild(el("strong",null,"Nhận xét cho "+($("nm").value.trim()||"học sinh")));
+  const txt=()=>[ "Gửi học sinh: "+r.cho_hoc_sinh,"Điểm mạnh: "+r.diem_manh,"Cần luyện thêm: "+r.can_luyen_them,"Cách luyện: "+r.cach_luyen,"Bài tiếp theo:\n"+(r.bai_tiep_theo||[]).map((x,i)=>`${i+1}. ${x.q} (Đáp án: ${x.a})`).join("\n"),"Gửi phụ huynh: "+r.cho_phu_huynh].join("\n\n");
+  const tl=el("div","tools");tl.append(copyBtn(txt),printBtn());bar.appendChild(tl);card.appendChild(bar);
+  const add=(h,t)=>{card.appendChild(el("div","sec",h));card.appendChild(el("div",null,t))};
+  add("Gửi học sinh",r.cho_hoc_sinh);add("Điểm mạnh",r.diem_manh);add("Cần luyện thêm",r.can_luyen_them);add("Cách luyện ở nhà",r.cach_luyen);
+  card.appendChild(el("div","sec","Bài tiếp theo"));
+  const ol=el("ol");(r.bai_tiep_theo||[]).forEach(x=>{const li=el("li",null,x.q);li.appendChild(el("div","ans","Đáp án: "+x.a));ol.appendChild(li)});card.appendChild(ol);
+  add("Gửi phụ huynh",r.cho_phu_huynh);
+  out.appendChild(card);
+}
+</script>
+</body>
+</html>
